@@ -187,3 +187,9 @@ uv.lock
 bandit-report.json
 safety-report.json
 .safety-project.ini
+
+# Fork-specific files (these are tracked, but listed here for reference)
+# FORK_MAINTENANCE.md - Fork maintenance documentation (tracked)
+# SYNC_QUICK_REFERENCE.md - Quick sync reference (tracked)
+# SETUP_SUMMARY.md - Setup summary (tracked)
+# sync-upstream.sh - Sync script (tracked)

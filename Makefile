@@ -1,4 +1,4 @@
-.PHONY: local dev test clean
+.PHONY: local dev test clean sync-upstream
 
 local:
 	@echo "Setting up and starting Template Agent locally..."
@@ -47,3 +47,31 @@ clean:
 	@find . -type f -name "*.pyo" -delete 2>/dev/null || true
 	@find . -type f -name ".DS_Store" -delete 2>/dev/null || true
 	@echo "Cleanup complete"
+
+sync-upstream:
+	@echo "Syncing fork with upstream repository..."
+	@if ! git remote get-url upstream &>/dev/null; then \
+		echo "Adding upstream remote..."; \
+		git remote add upstream https://github.com/redhat-data-and-ai/template-agent.git; \
+	fi
+	@echo "Fetching latest changes from upstream..."
+	@git fetch upstream
+	@echo ""
+	@echo "=== Sync Status ==="
+	@COMMITS_AHEAD=$$(git rev-list --count upstream/main..HEAD 2>/dev/null || echo "0"); \
+	COMMITS_BEHIND=$$(git rev-list --count HEAD..upstream/main 2>/dev/null || echo "0"); \
+	echo "Commits ahead of upstream: $$COMMITS_AHEAD"; \
+	echo "Commits behind upstream: $$COMMITS_BEHIND"; \
+	echo ""; \
+	if [ "$$COMMITS_BEHIND" -eq 0 ]; then \
+		echo "✓ Your fork is up to date!"; \
+	else \
+		echo "Recent upstream commits:"; \
+		git log --oneline HEAD..upstream/main | head -5; \
+		echo ""; \
+		echo "To merge upstream changes, run:"; \
+		echo "  git merge upstream/main"; \
+		echo ""; \
+		echo "Or use the interactive script:"; \
+		echo "  ./sync-upstream.sh"; \
+	fi
